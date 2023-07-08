@@ -24,6 +24,29 @@ async function listIsShowing(req, res) {
   res.json({ data: reponse });
 }
 
+function read(req, res) {
+  res.json({ data: res.locals.movie });
+}
+
+async function readTheaters(req, res) {
+  const response = await service.readTheaters(res.locals.movie.movie_id);
+  res.json({ data: response });
+}
+
+async function readReviews(req, res) {
+  const response = await service.readReviews(res.locals.movie.movie_id);
+  res.json({ data: response });
+}
+
 module.exports = {
   list,
+  read: [asyncErrorBoundary(movieExists), read],
+  readTheaters: [
+    asyncErrorBoundary(movieExists),
+    asyncErrorBoundary(readTheaters),
+  ],
+  readReviews: [
+    asyncErrorBoundary(movieExists),
+    asyncErrorBoundary(readReviews),
+  ],
 };
