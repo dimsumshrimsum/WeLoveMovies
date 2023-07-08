@@ -22,25 +22,23 @@ function readTheaters(movie_id) {
     .where({ "mt.movie_id": movie_id });
 }
 
-function readReviews(movie_id) {
-  return knex("reviews as r")
+async function readReviews(movie_id) {
+  const reviews = await knex("reviews as r")
     .join("movies as m", "r.movie_id", "m.movie_id")
     .join("critics as c", "r.critic_id", "c.critic_id")
     .select("r.*", "c.*")
-    .where({ "r.movie_id": movie_id })
-    .then((reviews) => {
-      return reviews.map((review) => {
-        return {
-          ...review,
-          critic: {
-            critic_id: review.critic_id,
-            preferred_name: review.preferred_name,
-            surname: review.surname,
-            organization_name: review.organization_name,
-          },
-        };
-      });
-    });
+    .where({ "r.movie_id": movie_id });
+  return reviews.map((review) => {
+    return {
+      ...review,
+      critic: {
+        critic_id: review.critic_id,
+        preferred_name: review.preferred_name,
+        surname: review.surname,
+        organization_name: review.organization_name,
+      },
+    };
+  });
 }
 
 module.exports = {
